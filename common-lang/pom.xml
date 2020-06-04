@@ -6,11 +6,11 @@
 
     <groupId>com.github.cpfniliu</groupId>
     <artifactId>common-lang</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1</version>
 
     <name>common-lang</name>
     <description>common-lang-utils</description>
-    <url>http://github.com/CPFniliu/common-lang.git</url>
+    <url>http://github.com/CPFniliu/my-artifact.git</url>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -27,9 +27,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/CPFniliu/common-lang.git</connection>
-        <developerConnection>scm:git:ssh://github.com:CPFniliu/common-lang.git</developerConnection>
-        <url>http://github.com/CPFniliu/common-lang</url>
+        <connection>scm:git:git://github.com/CPFniliu/my-artifact.git</connection>
+        <developerConnection>scm:git:ssh://github.com:CPFniliu/my-artifact.git</developerConnection>
+        <url>http://github.com/CPFniliu/my-artifact</url>
     </scm>
 
     <developers>
@@ -74,12 +74,6 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <version>2.3.0.RELEASE</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>18.0.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -136,7 +130,7 @@
                             <charset>UTF-8</charset>
                             <encoding>UTF-8</encoding>
                             <docencoding>UTF-8</docencoding>
-                            <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
+                             <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                         <executions>
                             <execution>
