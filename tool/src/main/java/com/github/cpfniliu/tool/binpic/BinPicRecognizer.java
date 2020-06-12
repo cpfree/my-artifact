@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateFormatUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +22,12 @@ import java.util.List;
 @Slf4j
 public class BinPicRecognizer {
 
+    /**
+     * 将路径指向的 binPic 转换为文件并存储到指定文件夹
+     *
+     * @param picPath binPic 图片路径
+     * @param saveDirPath 解析后的文件存储路径
+     */
     public static void convertBinPicToFile(String picPath, String saveDirPath) throws IOException {
         BinPicRecognizer recognizer = new BinPicRecognizer();
         recognizer.load(picPath);
@@ -38,11 +42,18 @@ public class BinPicRecognizer {
         }
     }
 
+    /**
+     * 将路径指向的 binPic 转换为文件并存储到 binPic 路径下的 outfile 文件夹
+     *
+     * @param picPath binPic 图片路径
+     */
     public static void convertBinPicToFileFromSourcePath(String picPath) throws IOException {
-        convertBinPicToFile(picPath, new File(picPath).getParentFile().getPath() + File.separator + DateFormatUtils.format(new Date(), "hh-mm-ss_"));
+        convertBinPicToFile(picPath, new File(picPath).getParentFile().getPath() + File.separator + "outfile" + File.separator);
     }
 
-
+    /**
+     * 图片
+     */
     private BufferedImage image;
 
     /**

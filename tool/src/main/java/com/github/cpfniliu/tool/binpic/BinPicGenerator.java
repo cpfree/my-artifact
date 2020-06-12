@@ -308,4 +308,22 @@ public class BinPicGenerator {
         log.info( "pixel end " + filePath);
     }
 
+    /**
+     * @param filePath 文件路径
+     * @param rowPxNum 一行像素个数
+     * @param pxWidth 像素宽度
+     * @param margin margin长度
+     * @param powerOf2 2的指数幂, 可选值为 1, 2, 4, 8, 以及8的倍数,
+     *                 像素颜色类型为 2 ^ powerOf2 个,
+     *                 如果为 1, 像素颜色为  2种, 每 1 个bit作为一个像素,
+     *                 如果为 2, 像素颜色为  4种, 每 2 个bit作为一个像素存储.
+     *                 如果为 4, 像素颜色为 16种, 每 4 个bit作为一个像素存储.
+     *                 如果为 8, 像素颜色为256种, 每 8 个bit作为一个像素存储.
+     *                 如果为8n, 像素颜色为 2 ^ 8n 种, 每 8n 个bit作为一个像素存储.
+     * @throws IOException 写入文件和读取文件流异常
+     */
+    public static void convertFileToBinPic(String filePath, int rowPxNum, int pxWidth, int margin, byte powerOf2) throws IOException {
+        convertFileToBinPic(filePath, filePath + ".png", rowPxNum, pxWidth, margin, powerOf2);
+    }
+
 }
