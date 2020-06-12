@@ -17,7 +17,6 @@ public class RegexValidateUtils {
      */
     public static final String REGEX_DATE = "^\\d{4}-(0?[1-9]|1[0-2])-((0?[1-9])|((1|2)[0-9])|30|31)$";
 
-
     /**
      * hh:mm:ss
      */

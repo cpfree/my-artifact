@@ -36,7 +36,7 @@ public interface IMapping<K, V> {
      * @param enumClass 枚举类
      * @param val 值
      * @param <T> 模板类型
-     * @return 如果 enumClass为空, 返回 null, 否则返回枚举类中第一个匹配val的枚举对象
+     * @return 如果 enumClass为空, 返回 null, 否则返回枚举类中第一个匹配val的枚举对象.
      */
     static <K1, V1, T extends IMapping<K1, V1>> T getByVal(Class<T> enumClass, V1 val) {
         if (enumClass == null) {

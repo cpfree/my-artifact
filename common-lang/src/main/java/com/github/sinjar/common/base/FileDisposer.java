@@ -1,4 +1,4 @@
-package com.github.sinjar.common;
+package com.github.sinjar.common.base;
 
 import java.io.File;
 

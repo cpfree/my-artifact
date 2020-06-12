@@ -1,6 +1,8 @@
 package com.github.sinjar.common.thread;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Validate;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
@@ -26,6 +28,11 @@ public class AsynchronousProcessor<T>{
     private Consumer<T> errFun;
 
     /**
+     * 多长时间运行一次(while true 中的一个执行sleep多久)
+     */
+    private int millisecond;
+
+    /**
      * 存放待处理的消息
      */
     private LinkedBlockingQueue<T> linkedBlockingQueue = new LinkedBlockingQueue<>();
@@ -35,13 +42,17 @@ public class AsynchronousProcessor<T>{
      */
     private Thread thread;
 
-    public AsynchronousProcessor(Predicate<T> disposeFun, boolean autoStart) {
-        this(disposeFun, null, autoStart);
-    }
-
-    public AsynchronousProcessor(Predicate<T> disposeFun, Consumer<T> errFun, boolean autoStart) {
+    /**
+     * @param disposeFun 消息的消息函数处理接口(不可为空)
+     * @param errFun 出错时的消费函数接口
+     * @param millisecond 线程多久处理一次(毫米), 为0, 表示不 sleep
+     * @param autoStart 是否自动 start
+     */
+    public AsynchronousProcessor(@NonNull Predicate<T> disposeFun, Consumer<T> errFun, int millisecond, boolean autoStart) {
         this.disposeFun = disposeFun;
         this.errFun = errFun;
+        Validate.isTrue(millisecond >= 0, "millisecond:%s 不能小于0", millisecond);
+        this.millisecond = millisecond;
         if (autoStart) {
             start();
         }
@@ -65,6 +76,10 @@ public class AsynchronousProcessor<T>{
                     // 如果失败则执行错误消费函数接口
                     if (!isSuccess && errFun != null) {
                         errFun.accept(t);
+                    }
+                    // 防止 CPU 过高占用
+                    if (millisecond > 0) {
+                        Thread.sleep(millisecond);
                     }
                 } catch (InterruptedException e) {
                     log.error("线程发生错误", e);
