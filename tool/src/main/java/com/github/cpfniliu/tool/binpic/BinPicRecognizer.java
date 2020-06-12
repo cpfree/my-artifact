@@ -1,6 +1,7 @@
 package com.github.cpfniliu.tool.binpic;
 
 import com.github.sinjar.common.util.common.ArrUtils;
+import com.github.sinjar.common.util.io.IoUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,13 +33,16 @@ public class BinPicRecognizer {
         BinPicRecognizer recognizer = new BinPicRecognizer();
         recognizer.load(picPath);
         recognizer.distinguish();
-        recognizer.pxReader.readFileInfo();
-        boolean check = recognizer.pxReader.check();
+        recognizer.pixelReader.readFileInfo();
+        boolean check = recognizer.pixelReader.check();
         if (!check) {
             log.error("转换文件失败, MD5值不一样");
         }
-        try (FileOutputStream outputStream = new FileOutputStream(new File(saveDirPath + recognizer.pxReader.getBinPicHeader().getFileName()))){
-            outputStream.write(recognizer.pxReader.fileContent);
+        // 确保存储的文件夹存在
+        IoUtils.insureFileDirExist(new File(saveDirPath));
+        // 写入文件
+        try (FileOutputStream outputStream = new FileOutputStream(new File(saveDirPath + recognizer.pixelReader.getBinPicHeader().getFileName()))){
+            outputStream.write(recognizer.pixelReader.fileContent);
         }
     }
 
@@ -72,21 +76,24 @@ public class BinPicRecognizer {
     @Getter
     private Point leftBottomPoint;
 
-    private PxReader pxReader;
+    private PixelReader pixelReader;
 
     public void load(String picPath) throws IOException {
         InputStream is = new BufferedInputStream(new FileInputStream(picPath));
         image = ImageIO.read(is);
     }
 
-    static class PxReader{
+    /**
+     *
+     */
+    static class PixelReader {
         private BufferedImage image;
 
         private int[] xArr;
 
         private int[] yArr;
 
-        public PxReader(BufferedImage image, int[] xArr, int[] yArr) {
+        public PixelReader(BufferedImage image, int[] xArr, int[] yArr) {
             this.image = image;
             this.xArr = xArr;
             this.yArr = yArr;
@@ -113,6 +120,9 @@ public class BinPicRecognizer {
         @Getter
         private int contentLength;
 
+        /**
+         * 读取初始化数据
+         */
         public void init() {
             no = 0;
             int[] powOf2Bin = readPixel(8);
@@ -123,12 +133,20 @@ public class BinPicRecognizer {
             byteModal = readPixel(radix);
         }
 
+        /**
+         * 将一段整形数据 按规则 解析成一个整数
+         *
+         * @param byteModal 解析 byte 类型
+         * @param vals int 值
+         * @param bit 基数位
+         * @return 解析后的整数
+         */
         public int deCode(int[] byteModal, int[] vals, int bit) {
             int val = 0;
             for (int i : vals) {
                 int i1 = ArrUtils.indexOf(byteModal, i);
                 if (i1 < 0) {
-                    throw new RuntimeException();
+                    throw new RuntimeException("像素失真! 在byteModal中未发现xi相关数据;");
                 }
                 val = val << bit | i1;
             }
@@ -148,6 +166,9 @@ public class BinPicRecognizer {
             return BinPicUtils.deCodeToByte(powOf2, bytes);
         }
 
+        /**
+         * 检查文件MD5值
+         */
         private boolean check() {
             String md5Hex = DigestUtils.md5Hex(fileContent);
             String md5 = binPicHeader.getMd5();
@@ -298,7 +319,7 @@ public class BinPicRecognizer {
             xList.remove(0);
             int[] yArr = xList.stream().mapToInt(it -> it).toArray();
 
-            pxReader = new PxReader(image, xArr, yArr);
+            pixelReader = new PixelReader(image, xArr, yArr);
         }
     }
 

@@ -206,6 +206,7 @@ public class BinPicGenerator {
         if (x <= 0 && y <= 0) {
             x = pointXStart;
             y = pointYStart;
+            return;
         }
         // 坐标移动至下一像素
         if (x < pointXEnd) {
