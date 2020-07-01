@@ -31,15 +31,15 @@ public class RegexValidateUtils {
 
     public static final String REGEX_PHONE = "^1([345789])\\d{9}$";
 
-    static boolean isEmail(String email){
+    public static boolean isEmail(String email){
         return Pattern.matches(REGEX_EMAIL, email);
     }
 
-    static boolean isPhone(String phone) {
+    public static boolean isPhone(String phone) {
         return Pattern.matches(REGEX_PHONE, phone);
     }
 
-    static boolean isDigit(String string) {
+    public static boolean isDigit(String string) {
         for (int i = 0, len = string.length(); i < len; i++) {
             if (!Character.isDigit(string.charAt(i))) {
                 return false;

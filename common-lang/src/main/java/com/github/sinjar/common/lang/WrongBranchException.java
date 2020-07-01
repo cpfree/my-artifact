@@ -1,7 +1,7 @@
 package com.github.sinjar.common.lang;
 
 /**
- * <b>Description : </b> 错误分支异常
+ * <b>Description : </b> 错误分支异常, 用于分支控制时执行到不该执行的分支时抛出
  *
  * @author CPF
  * Date: 2020/3/24 16:20

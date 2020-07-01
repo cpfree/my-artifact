@@ -6,7 +6,7 @@
 
     <groupId>com.github.cpfniliu</groupId>
     <artifactId>common-lang</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 
     <name>common-lang</name>
     <description>common-lang-utils</description>
@@ -73,11 +73,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <version>2.3.0.RELEASE</version>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
-
-
 
     <profiles>
         <profile>

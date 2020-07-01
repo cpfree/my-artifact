@@ -62,6 +62,17 @@ public class RequireUtil {
     }
 
     /**
+     * flag不为true则抛出异常
+     *
+     * @param flag 待验证的值
+     */
+    public static void requireBooleanTrue(boolean flag, String message) {
+        if (!flag) {
+            throw new RequireCheckException("false: " + message);
+        }
+    }
+
+    /**
      * arrs 中不包含 target 则抛出异常
      *
      * @param target 目标
