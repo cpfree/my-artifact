@@ -1,10 +1,6 @@
 package com.github.cpfniliu.tool.binpic;
 
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.Validate;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,9 +10,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
- * <b>Description : </b> 生成 binPic 图片工具类
+ * <b>Description : </b> 生成 binPic 图片工具类.
+ * 因为当前类可能需要手动输入到指定环境, 因此当前类中的代码, 以及其调用到的代码不使用任何其它非JRE官方jar包
  *
  * @author CPF
  * Date: 2020/5/19 15:40
@@ -27,7 +25,7 @@ public class BinPicGenerator {
     /**
      * 像素宽度
      */
-    public final int pxSideLength;
+    private final int pxSideLength;
     /**
      * 绘制区域高度
      */
@@ -59,7 +57,6 @@ public class BinPicGenerator {
     /**
      * 绘制图片对象
      */
-    @Getter
     private BufferedImage image;
     /**
      * 绘制像素颜色映射数组
@@ -68,8 +65,7 @@ public class BinPicGenerator {
     /**
      * h
      */
-    @Getter
-    int num = 0;
+    private int num = 0;
 
     /**
      * @param imageWidth 图片宽度
@@ -78,10 +74,10 @@ public class BinPicGenerator {
      * @param pixelSideLength 像素边长
      */
     public BinPicGenerator(int imageWidth, int imageHeight, Rectangle area, int pixelSideLength) {
-        log.info("image: 图片宽度X高度: {}X{}, 绘图区域: {}, 像素边长:{}", imageWidth, imageHeight, area, pixelSideLength);
+        log.info("image: [width, height]:[{}, {}], area: {}, pixelSideLength:{}", imageWidth, imageHeight, area, pixelSideLength);
         // check
-        Validate.isTrue(area.x + area.width <= imageWidth, "宽度设置越界");
-        Validate.isTrue(area.y + area.height <= imageHeight, "高度设置越界");
+        BinPicUtils.isTrue(area.x + area.width <= imageWidth, "the setting of width out of range");
+        BinPicUtils.isTrue(area.y + area.height <= imageHeight, "the setting of height out of range");
         this.pxSideLength = pixelSideLength;
         pointXStart = area.x;
         pointXEnd = pointXStart + (area.width / pixelSideLength - 1) * pixelSideLength;
@@ -142,10 +138,11 @@ public class BinPicGenerator {
         }
     }
 
-    public void setMappingColor(@NonNull Color[] mappingColor) {
+    public void setMappingColor(Color[] mappingColor) {
+        Objects.requireNonNull(mappingColor, "mappingColor cannot be null");
         int length = mappingColor.length;
         if (!Arrays.asList(2, 4, 16, 256).contains(length)) {
-            throw new RuntimeException("不支持的mappingColor 长度: " + length);
+            throw new RuntimeException("not support the length of mappingColor: " + length);
         }
         this.mappingColor = mappingColor;
     }
@@ -167,7 +164,7 @@ public class BinPicGenerator {
     }
 
     public void drawer(byte[] b, int len) {
-        Validate.isTrue(mappingColor != null, "mappingColor不能为空");
+        Objects.requireNonNull(mappingColor, "mappingColor must not be null");
         // 将byte数组转为 mappingColor 进制数组
         int[] clr = BinPicUtils.convertByte(mappingColor.length, b, len);
         doDrawer(clr);
@@ -218,7 +215,7 @@ public class BinPicGenerator {
             x = pointXStart;
             return;
         }
-        throw new RuntimeException("像素图形绘制越界");
+        throw new RuntimeException("draw pixel out of range");
     }
 
     /**
@@ -237,12 +234,14 @@ public class BinPicGenerator {
      *                 如果为8n, 像素颜色为 2 ^ 8n 种, 每 8n 个bit作为一个像素存储.
      * @throws IOException 写入文件和读取文件流异常
      */
-    public static BinPicGenerator convertFileToBinPic(@NonNull File file, int rowPxNum, int pixelSideLength, int margin, byte powerOf2) throws IOException {
-        Validate.isTrue(file.isFile(), "file不是一个文件: %s", file.getAbsolutePath());
-        Validate.isTrue(margin > 0, "margin 需要 大于 0: %s", margin);
-        Validate.isTrue(pixelSideLength > 0, "像素宽度 需要 大于 0: %s", pixelSideLength);
-        Validate.isTrue(rowPxNum > 0, "行像素个数 需要 大于 0: %s", rowPxNum);
-        Validate.isTrue(powerOf2 == 1 || powerOf2 == 2 || powerOf2 == 4 || powerOf2 == 8, "不支持的powerOf2: %s", powerOf2);
+    public static BinPicGenerator convertFileToBinPic(File file, int rowPxNum, int pixelSideLength, int margin, byte powerOf2) throws IOException {
+        Objects.requireNonNull(file);
+        BinPicUtils.isTrue(file.isFile(), "file is not a file: %s", file.getAbsolutePath());
+        BinPicUtils.isTrue(margin > 0, "margin should > 0: %s", margin);
+        BinPicUtils.isTrue(pixelSideLength > 0, "the width of width should > 0, pixelSideLength: %s", pixelSideLength);
+        // 行像素个数 需要 大于 0
+        BinPicUtils.isTrue(rowPxNum > 0, "the number of pixel a row should > 0, rowPxNum: %s", rowPxNum);
+        BinPicUtils.isTrue(powerOf2 == 1 || powerOf2 == 2 || powerOf2 == 4 || powerOf2 == 8, "not found the powerOf2: %s", powerOf2);
 
         // 像素类型数量
         int pxTypeCnt = (int) Math.pow(2, powerOf2);
@@ -250,10 +249,11 @@ public class BinPicGenerator {
         BinPicHeader header = new BinPicHeader();
         header.setFileName(file.getName());
         header.setFileContentLength(file.length());
-        header.setMd5(DigestUtils.md5Hex(new FileInputStream(file)));
-        String s = header.toJson();
-        byte[] headBytes = s.getBytes();
-        log.info("head\t" + s);
+        byte[] dataByte = BinPicUtils.file2Byte(file);
+        header.setMd5(BinPicUtils.encrypt2ToMd5(dataByte));
+        final String json = header.toJson();
+        byte[] headBytes = json.getBytes();
+        log.info("head\t" + json);
 
         // 像素总个数
         long pxTotalSize = (8 + pxTypeCnt) + (4 + 4 + headBytes.length + file.length()) * 8 / powerOf2;
@@ -263,7 +263,7 @@ public class BinPicGenerator {
         int areaHeight = (int)Math.ceil((double) pxTotalSize / rowPxNum) * pixelSideLength;
         // pic 长度 = 边缘长度 + 定位区长度
         int borderLength = margin + pixelSideLength;
-        log.info("像素总个数 : {}, 绘制区域宽度X高度: {}X{}, 边缘长度: {}", pxTotalSize, areaWidth, areaHeight, margin);
+        log.info("pxTotalSize : {}, draw area: [width, height]:[{}, {}], border margin: {}", pxTotalSize, areaWidth, areaHeight, margin);
         BinPicGenerator binPicGenerator = new BinPicGenerator(areaWidth + borderLength * 2, areaHeight + borderLength * 2,
                 new Rectangle(borderLength, borderLength, areaWidth, areaHeight), pixelSideLength);
 
@@ -327,4 +327,11 @@ public class BinPicGenerator {
         convertFileToBinPic(filePath, filePath + ".png", rowPxNum, pxWidth, margin, powerOf2);
     }
 
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public int getNum() {
+        return num;
+    }
 }

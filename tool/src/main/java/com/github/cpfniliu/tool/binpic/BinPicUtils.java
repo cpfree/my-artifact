@@ -1,6 +1,12 @@
 package com.github.cpfniliu.tool.binpic;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * <b>Description : </b>
@@ -10,7 +16,8 @@ import java.awt.*;
  */
 public class BinPicUtils {
 
-    private BinPicUtils() { }
+    private BinPicUtils() {
+    }
 
     /**
      * 获取不同种类的像素数量
@@ -34,8 +41,7 @@ public class BinPicUtils {
             case 2:
                 colors = new Color[]{Color.BLUE, Color.WHITE, Color.green, Color.RED};
                 break;
-            case 4:
-            {
+            case 4: {
                 int[] rArr = {0x10, 0xe0};
                 int[] gArr = rArr;
                 int[] bArr = {0x00, 0x50, 0xa0, 0xf0};
@@ -50,8 +56,7 @@ public class BinPicUtils {
                 }
             }
             break;
-            case 8:
-            {
+            case 8: {
                 int[] rArr = {0x00, 0x50, 0xa0, 0xf0};
                 int[] gArr = {0x10, 0x30, 0x50, 0x70, 0x90, 0xb0, 0xd0, 0xf0};
                 int[] bArr = gArr;
@@ -75,12 +80,13 @@ public class BinPicUtils {
 
     /**
      * 将int转换为byte数组
+     *
      * @param number 整形数据
      * @return 转换后的byte数组
      */
-    public static byte[] toBytes(int number){
+    public static byte[] toBytes(int number) {
         byte[] bytes = new byte[4];
-        bytes[3] = (byte)number;
+        bytes[3] = (byte) number;
         bytes[2] = (byte) (number >>> 8);
         bytes[1] = (byte) (number >>> 16);
         bytes[0] = (byte) (number >>> 24);
@@ -89,7 +95,7 @@ public class BinPicUtils {
 
     /**
      * 将一个byte数组, 按照进制基数, 转换为另一个byte数组
-     *
+     * <p>
      * eg: 当powOf2 为4, 将 [bbbbbbbb] 转换为 [0000bbbb, 0000bbbb], b代表有含义的数
      *
      * @param powOf2 {@link BinPicUtils#deCodeToByte(int, byte[])}
@@ -124,6 +130,51 @@ public class BinPicUtils {
                 r[j++] = (byte) (b[i] & 0b00001111);
             }
         } else if (powOf2 == 256) {
+            r = new int[len];
+            for (int i = 0; i < len; i++) {
+                r[i] = Byte.toUnsignedInt(b[i]);
+            }
+        }
+        return r;
+    }
+
+    /**
+     * 将一个byte数组, 按照进制基数, 转换为另一个byte数组
+     * <p>
+     * eg: 当powOf2 为4, 将 [bbbbbbbb] 转换为 [0000bbbb, 0000bbbb], b代表有含义的数
+     *
+     * @param bit {@link BinPicUtils#deCodeToByte(int, byte[])}
+     */
+    @SuppressWarnings("java:S127")
+    public static int[] concatByte(int bit, byte[] b, int len) {
+        int[] r = null;
+        if (bit == 1) {
+            r = new int[len * 8];
+            for (int i = 0, j = 0; i < len; i++) {
+                r[j++] = ((b[i] & 0b10000000) >>> 7);
+                r[j++] = (byte) ((b[i] & 0b01000000) >>> 6);
+                r[j++] = (byte) ((b[i] & 0b00100000) >>> 5);
+                r[j++] = (byte) ((b[i] & 0b00010000) >>> 4);
+                r[j++] = (byte) ((b[i] & 0b00001000) >>> 3);
+                r[j++] = (byte) ((b[i] & 0b00000100) >>> 2);
+                r[j++] = (byte) ((b[i] & 0b00000010) >>> 1);
+                r[j++] = (byte) (b[i] & 0b00000001);
+            }
+        } else if (bit == 2) {
+            r = new int[len * 4];
+            for (int i = 0, j = 0; i < len; i++) {
+                r[j++] = (byte) ((b[i] & 0b11000000) >>> 6);
+                r[j++] = (byte) ((b[i] & 0b00110000) >>> 4);
+                r[j++] = (byte) ((b[i] & 0b00001100) >>> 2);
+                r[j++] = (byte) (b[i] & 0b00000011);
+            }
+        } else if (bit == 4) {
+            r = new int[len * 2];
+            for (int i = 0, j = 0; i < len; i++) {
+                r[j++] = (byte) ((b[i] & 0b11110000) >>> 4);
+                r[j++] = (byte) (b[i] & 0b00001111);
+            }
+        } else if (bit == 8) {
             r = new int[len];
             for (int i = 0; i < len; i++) {
                 r[i] = Byte.toUnsignedInt(b[i]);
@@ -179,4 +230,55 @@ public class BinPicUtils {
         return bytes;
     }
 
+    public static String encrypt2ToMd5(byte[] data) {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return "";
+        }
+        byte[] digest = md5.digest(data);
+        return new BigInteger(1, digest).toString(16);
+    }
+
+    /**
+     * 将文件转换成byte数组
+     */
+    public static byte[] file2Byte(File tradeFile) {
+        try (FileInputStream fis = new FileInputStream(tradeFile);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] b = new byte[8 * 1024];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new byte[0];
+    }
+
+    /**
+     * copy by {@link org.apache.commons.lang3.Validate#isTrue(boolean, java.lang.String, java.lang.Object...)}
+     */
+    public static void isTrue(final boolean expression, final String message, final Object... values) {
+        if (!expression) {
+            throw new IllegalArgumentException(String.format(message, values));
+        }
+    }
+
+    /**
+     * 从系统中加载图片
+     */
+    public static BufferedImage load(String picPath) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(picPath))) {
+            final BufferedImage image = ImageIO.read(is);
+            if (image == null) {
+                throw new RuntimeException("图片读取失败, 请检查文件格式是否正确");
+            }
+            return null;
+        }
+    }
 }

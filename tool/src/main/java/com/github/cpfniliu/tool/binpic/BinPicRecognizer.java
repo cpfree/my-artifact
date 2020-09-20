@@ -1,16 +1,17 @@
 package com.github.cpfniliu.tool.binpic;
 
-import com.github.sinjar.common.util.common.ArrUtils;
-import com.github.sinjar.common.util.io.IoUtils;
+import com.github.cpfniliu.common.util.common.ArrUtils;
+import com.github.cpfniliu.common.util.io.IoUtils;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.Validate;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,21 +30,21 @@ public class BinPicRecognizer {
      * @param picPath binPic 图片路径
      * @param saveDirPath 解析后的文件存储路径
      */
-    public static void convertBinPicToFile(String picPath, String saveDirPath) throws IOException {
-        BinPicRecognizer recognizer = new BinPicRecognizer();
-        recognizer.load(picPath);
-        recognizer.distinguish();
-        recognizer.pixelReader.readFileInfo();
-        boolean check = recognizer.pixelReader.check();
+    public static boolean convertBinPicToFile(String picPath, String saveDirPath) throws IOException {
+        final BufferedImage image = BinPicUtils.load(picPath);
+        final PixelReader resolver = BinPicRecognizer.resolver(image);
+        boolean check = resolver.check();
         if (!check) {
             log.error("转换文件失败, MD5值不一样");
+            return false;
         }
         // 确保存储的文件夹存在
         IoUtils.insureFileDirExist(new File(saveDirPath));
         // 写入文件
-        try (FileOutputStream outputStream = new FileOutputStream(new File(saveDirPath + recognizer.pixelReader.getBinPicHeader().getFileName()))){
-            outputStream.write(recognizer.pixelReader.fileContent);
+        try (FileOutputStream outputStream = new FileOutputStream(new File(saveDirPath + resolver.getBinPicHeader().getFileName()))){
+            outputStream.write(resolver.fileContent);
         }
+        return true;
     }
 
     /**
@@ -51,13 +52,26 @@ public class BinPicRecognizer {
      *
      * @param picPath binPic 图片路径
      */
-    public static void convertBinPicToFileFromSourcePath(String picPath) throws IOException {
-        convertBinPicToFile(picPath, new File(picPath).getParentFile().getPath() + File.separator + "outfile" + File.separator);
+    public static boolean convertBinPicToFileFromSourcePath(String picPath) throws IOException {
+        return convertBinPicToFile(picPath, new File(picPath).getParentFile().getPath() + File.separator + "outfile" + File.separator);
+    }
+
+    /**
+     * @param image 待识别的图片
+     * @return 识别后的识别器对象
+     */
+    public static PixelReader resolver(BufferedImage image) {
+        BinPicRecognizer recognizer = new BinPicRecognizer();
+        recognizer.setImage(image);
+        recognizer.distinguish();
+        recognizer.pixelReader.readFileInfo();
+        return recognizer.getPixelReader();
     }
 
     /**
      * 图片
      */
+    @Setter
     private BufferedImage image;
 
     /**
@@ -76,17 +90,14 @@ public class BinPicRecognizer {
     @Getter
     private Point leftBottomPoint;
 
+    @Getter
     private PixelReader pixelReader;
-
-    public void load(String picPath) throws IOException {
-        InputStream is = new BufferedInputStream(new FileInputStream(picPath));
-        image = ImageIO.read(is);
-    }
 
     /**
      *
      */
-    static class PixelReader {
+    public static class PixelReader {
+        @Getter
         private BufferedImage image;
 
         private int[] xArr;
@@ -105,6 +116,7 @@ public class BinPicRecognizer {
          */
         int no;
 
+        @Getter
         private byte[] fileContent;
 
         private int[] byteModal;
@@ -169,8 +181,8 @@ public class BinPicRecognizer {
         /**
          * 检查文件MD5值
          */
-        private boolean check() {
-            String md5Hex = DigestUtils.md5Hex(fileContent);
+        public boolean check() {
+            String md5Hex = BinPicUtils.encrypt2ToMd5(fileContent);
             String md5 = binPicHeader.getMd5();
             log.info("像素head信息MD5值: {}", md5);
             log.info("文件解析内容MD5值: {}", md5);
@@ -191,8 +203,9 @@ public class BinPicRecognizer {
             // 读取文件信息
             byte[] content = readByte(contentLength);
             // 文件头
-            binPicHeader = BinPicHeader.fromJson(new String(content));
-            log.info("文件头信息: {}", binPicHeader);
+            final String json = new String(content);
+            log.info("文件头信息: {}", json);
+            binPicHeader = BinPicHeader.fromJson(json);
             // 文件内容
             fileContent = readByte(binPicHeader.getFileContentLength());
         }
@@ -263,7 +276,7 @@ public class BinPicRecognizer {
 
         // 验证
         if (isBorderVal(image.getRGB(leftTopPoint.x - 1, leftTopPoint.y)) || isBorderVal(image.getRGB(leftTopPoint.x, leftTopPoint.y - 1))) {
-            throw new RuntimeException("gfdsgdfs");
+            throw new RuntimeException("像素位置验证失败");
         }
         // 左上方标记点应为黑色
         Validate.isTrue(isBlack(image.getRGB(leftTopPoint.x, leftTopPoint.y)), "isNotBlack");
@@ -323,6 +336,9 @@ public class BinPicRecognizer {
         }
     }
 
+    public boolean checkMd5() {
+        return pixelReader.check();
+    }
 
     /**
      * 判断定位区像素是否是白色或黑色
