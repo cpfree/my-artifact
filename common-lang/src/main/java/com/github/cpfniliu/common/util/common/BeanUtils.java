@@ -1,6 +1,7 @@
 package com.github.cpfniliu.common.util.common;
 
 import com.github.cpfniliu.common.ext.hub.SimpleCode;
+import com.github.cpfniliu.common.lang.RuntimeExtException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.beans.BeanInfo;
@@ -57,14 +58,18 @@ public class BeanUtils {
         org.apache.commons.beanutils.BeanUtils.populate(bean, properties);
     }
 
-    public static <T> T mapToBean(Map<String, Object> properties, Class<T> beanClass) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
-        T t = beanClass.getDeclaredConstructor().newInstance();
+    public static <T> T mapToBean(Map<String, Object> properties, Class<T> beanClass) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+        T t;
+        try {
+            t = beanClass.getDeclaredConstructor().newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeExtException(beanClass.getName() + "中未发现无参构造方法", e);
+        }
         org.apache.commons.beanutils.BeanUtils.populate(t, properties);
         return t;
     }
 
-    public static <T> List<T> mapListToBeanList(List<Map<String, Object>> mapList, Class<T> beanClass) throws InvocationTargetException,
-            InstantiationException, IllegalAccessException, NoSuchMethodException {
+    public static <T> List<T> mapListToBeanList(List<Map<String, Object>> mapList, Class<T> beanClass) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         List<T> result = new ArrayList<>();
         if (mapList == null) {
             return result;

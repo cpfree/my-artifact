@@ -1,6 +1,6 @@
 package com.github.cpfniliu.common.validate;
 
-import com.github.cpfniliu.common.lang.RequireCheckException;
+import com.github.cpfniliu.common.lang.CheckException;
 
 import java.util.*;
 
@@ -15,7 +15,7 @@ public class RequireUtil {
      */
     public static void requireStringNonBlank(String str) {
         if (str == null || str.length() == 0) {
-            throw new RequireCheckException("字符串为空!");
+            throw new CheckException("字符串为空!");
         }
     }
 
@@ -36,7 +36,7 @@ public class RequireUtil {
     public static <T> void requireCollectNonBlank(Collection<T> collection) {
         Objects.requireNonNull(collection);
         if (collection.isEmpty()) {
-            throw new RequireCheckException("集合为空!");
+            throw new CheckException("集合为空!");
         }
     }
 
@@ -46,7 +46,7 @@ public class RequireUtil {
     public static void requireMapNonBlank(Map<?, ?> map) {
         Objects.requireNonNull(map);
         if (map.isEmpty()) {
-            throw new RequireCheckException("map为空!");
+            throw new CheckException("map为空!");
         }
     }
 
@@ -57,7 +57,7 @@ public class RequireUtil {
      */
     public static void requireBooleanTrue(boolean flag) {
         if (!flag) {
-            throw new RequireCheckException("boolean 为false");
+            throw new CheckException("boolean 为false");
         }
     }
 
@@ -68,7 +68,7 @@ public class RequireUtil {
      */
     public static void requireBooleanTrue(boolean flag, String message) {
         if (!flag) {
-            throw new RequireCheckException("false: " + message);
+            throw new CheckException("false: " + message);
         }
     }
 
@@ -80,7 +80,7 @@ public class RequireUtil {
      */
     public static void requireContainsTargetInArrays(Object target, Object... arrs) {
         if (!Arrays.asList(arrs).contains(target)) {
-            throw new RequireCheckException("array 中不包含 target");
+            throw new CheckException("array 中不包含 target");
         }
     }
 

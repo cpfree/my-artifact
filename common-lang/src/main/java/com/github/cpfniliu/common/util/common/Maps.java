@@ -48,13 +48,15 @@ public class Maps {
         return new HashMap<>(capacity(expectedSize));
     }
 
-    public static <K, V> void changeKeyIfAbsent(Map<K, V> map, K oldKey, K newKey) {
-        if (map.containsKey(oldKey)) {
-            V v = map.remove(oldKey);
-            map.putIfAbsent(newKey, v);
-        }
-    }
-
+    /**
+     * 将旧key对应的Value赋值到新key对应的Value中
+     *
+     * @param map map
+     * @param oldKey 旧的键值
+     * @param newKey 新的键值
+     * @param <K> map的Key类型
+     * @param <V> map的Value类型
+     */
     public static <K, V> void changeKey(Map<K, V> map, K oldKey, K newKey) {
         if (map.containsKey(oldKey)) {
             V v = map.remove(oldKey);
@@ -62,14 +64,28 @@ public class Maps {
         }
     }
 
+    /**
+     * 将旧key对应的Value赋值到新key对应的Value中
+     *
+     * @param map map
+     * @param operator 新key提供值(旧key -> 新key)
+     * @param <K> map的Key类型
+     * @param <V> map的Value类型
+     */
     public static <K, V> void changeKey(Map<K, V> map, UnaryOperator<K> operator) {
         map.forEach((key, value) -> {
             K apply = operator.apply(key);
             map.remove(key);
-            map.putIfAbsent(apply, value);
+            map.put(apply, value);
         });
     }
 
+    /**
+     *
+     *
+     * @param map map
+     * @param <V> map中的Value类型
+     */
     public static <V> void changeKeyToCamel(Map<String, V> map) {
         changeKey(map, StrUtils::lowerCamel);
     }
