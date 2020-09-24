@@ -149,6 +149,7 @@ public class BinPicGenerator {
 
 
     public void drawerHead(byte powOf2, int rowPxNum, int fileInfoByteLength) {
+        // 8bit
         int[] bytes = BinPicUtils.convertByte(2, new byte[]{powOf2}, 1);
         doDrawer(bytes);
         // color draw

@@ -57,7 +57,9 @@ public class BinPicUtils {
             }
             break;
             case 8: {
+                // 4进制
                 int[] rArr = {0x00, 0x50, 0xa0, 0xf0};
+                // 8进制
                 int[] gArr = {0x10, 0x30, 0x50, 0x70, 0x90, 0xb0, 0xd0, 0xf0};
                 int[] bArr = gArr;
                 colors = new Color[rArr.length * gArr.length * bArr.length];

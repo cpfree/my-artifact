@@ -94,14 +94,20 @@ public class BinPicRecognizer {
     private PixelReader pixelReader;
 
     /**
-     *
+     * 像素读取
      */
     public static class PixelReader {
         @Getter
         private BufferedImage image;
 
+        /**
+         * x 像素区域列表
+         */
         private int[] xArr;
 
+        /**
+         * y 像素区域列表
+         */
         private int[] yArr;
 
         public PixelReader(BufferedImage image, int[] xArr, int[] yArr) {
@@ -216,7 +222,7 @@ public class BinPicRecognizer {
         }
 
         /**
-         * @param number 读取 pixel 数目
+         * @param number 读取像素图片内容区中指定数目的 pixel, 并返回
          * @return 读取的像素值
          */
         @SuppressWarnings({"java:S1994", "java:S127"})
@@ -239,7 +245,7 @@ public class BinPicRecognizer {
     }
 
     /**
-     * 识别
+     * 识别图片定位区
      */
     @SuppressWarnings({"java:S3776", "java:S1199", "java:S3518"})
     public void distinguish(){
@@ -334,10 +340,6 @@ public class BinPicRecognizer {
 
             pixelReader = new PixelReader(image, xArr, yArr);
         }
-    }
-
-    public boolean checkMd5() {
-        return pixelReader.check();
     }
 
     /**
