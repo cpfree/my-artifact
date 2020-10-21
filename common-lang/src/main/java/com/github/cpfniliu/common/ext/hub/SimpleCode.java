@@ -178,4 +178,17 @@ public class SimpleCode {
         return defaultValue;
     }
 
+    /**
+     * @param runnableWithThrow 运行函数表达式(带有异常)
+     * @return 若出现异常, 则将异常返回, 否则返回 null
+     */
+    public static Exception catchThrow(RunnableWithThrow runnableWithThrow) {
+        try {
+            runnableWithThrow.run();
+            return null;
+        } catch (Exception e) {
+            return e;
+        }
+    }
+
 }

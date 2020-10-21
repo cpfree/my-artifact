@@ -1,6 +1,6 @@
 package cn.cpf.test.keypress.man;
 
-import com.github.cpfniliu.tool.binpic.BinPicRecognizer;
+import com.github.cpfniliu.tool.pixelpic.PixelPicRecognizer;
 
 import java.io.IOException;
 
@@ -16,9 +16,9 @@ public class ResolvePixelLattice {
         final String path = args[0];
         if (args.length >= 2) {
             final String savePath = args[1];
-            BinPicRecognizer.convertBinPicToFile(path, savePath);
+            PixelPicRecognizer.convertBinPicToFile(path, savePath);
         }  else {
-            BinPicRecognizer.convertBinPicToFileFromSourcePath(path);
+            PixelPicRecognizer.convertBinPicToFileFromSourcePath(path);
         }
     }
 }

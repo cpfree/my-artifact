@@ -1,5 +1,7 @@
 package com.github.cpfniliu.tool.binpic;
 
+import com.github.cpfniliu.tool.pixelpic.BinPicUtils;
+import com.github.cpfniliu.tool.pixelpic.PixelPicHeader;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
@@ -247,7 +249,7 @@ public class BinPicGenerator {
         // 像素类型数量
         int pxTypeCnt = (int) Math.pow(2, powerOf2);
         // 初始化文件头信息
-        BinPicHeader header = new BinPicHeader();
+        PixelPicHeader header = new PixelPicHeader();
         header.setFileName(file.getName());
         header.setFileContentLength(file.length());
         byte[] dataByte = BinPicUtils.file2Byte(file);

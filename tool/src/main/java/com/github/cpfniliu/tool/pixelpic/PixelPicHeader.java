@@ -1,4 +1,4 @@
-package com.github.cpfniliu.tool.binpic;
+package com.github.cpfniliu.tool.pixelpic;
 
 import com.google.gson.Gson;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.Date;
  * Date: 2020/5/21 14:17
  */
 @Data
-public class BinPicHeader implements Serializable {
+public class PixelPicHeader implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,25 +51,13 @@ public class BinPicHeader implements Serializable {
      */
     private String type;
 
-    public static BinPicHeader fromJson(String json) {
-        return new Gson().fromJson(json, BinPicHeader.class);
+    public static PixelPicHeader fromJson(String json) {
+        return new Gson().fromJson(json, PixelPicHeader.class);
     }
 
     public String toJson() {
         final String format = "{\"version\":%s,\"versionTime\":%s,\"enTime\":%s,\"fileName\":\"%s\",\"fileContentLength\":%s,\"md5\":\"%s\",\"type\":\"%s\"}";
         return String.format(format, version, versionTime, enTime, fileName, fileContentLength, md5, type);
-    }
-
-    @SuppressWarnings("java:S106")
-    public static void main(String[] args) {
-        BinPicHeader header = new BinPicHeader();
-        header.setFileName("测试名称.fjk");
-        header.setFileContentLength(23423420L);
-        header.setMd5("432423-fe-asu-de[e");
-        header.setType(TYPE_FILE);
-        final String s = header.toJson();
-        final BinPicHeader header1 = BinPicHeader.fromJson(s);
-        System.out.println(header1);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.github.cpfniliu.tool.binpic;
+package com.github.cpfniliu.tool.pixelpic;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -32,7 +32,7 @@ public class BinPicUtils {
      * @return 像素颜色数组
      */
     @SuppressWarnings({"java:S3776", "all"})
-    public static Color[] getPxType(byte powerOf2) {
+    public static Color[] getPxType(int powerOf2) {
         Color[] colors;
         switch (powerOf2) {
             case 1:
@@ -74,7 +74,7 @@ public class BinPicUtils {
             }
             break;
             default:
-                throw new RuntimeException();
+                throw new RuntimeException("不支持的类型");
         }
         return colors;
     }
@@ -280,7 +280,7 @@ public class BinPicUtils {
             if (image == null) {
                 throw new RuntimeException("图片读取失败, 请检查文件格式是否正确");
             }
-            return null;
+            return image;
         }
     }
 }

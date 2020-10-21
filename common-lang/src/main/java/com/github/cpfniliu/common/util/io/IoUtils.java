@@ -136,15 +136,13 @@ public class IoUtils {
      * @param content 内容
      *
      */
-    public static void writeFile(@NonNull String savePath, @NonNull String content) {
+    public static void writeFile(@NonNull String savePath, @NonNull byte[] content) throws IOException {
         final File file = new File(savePath);
         insureFileExist(file);
 
         // 写入文件
-        try (final FileWriter writer = new FileWriter(file)){
+        try (final FileOutputStream writer = new FileOutputStream(file)){
             writer.write(content);
-        } catch (IOException e) {
-            log.error("读取文件失败", e);
         }
     }
 
@@ -186,10 +184,11 @@ public class IoUtils {
      *
      * @param file 文件
      */
-    public static void insureFileExist(@NonNull final File file) {
+    public static boolean insureFileExist(@NonNull final File file) {
         final boolean exists = file.exists();
         if (exists) {
-            Validate.isTrue(file.isFile(), "创建文件异常, 已存在同名非文件事物, 请检查 path : " + file.getPath());
+            Validate.isTrue(file.isFile(), "创建文件异常, 已存在同名非文件事物(如存在和当前文件相同的文件夹), 请检查 path : " + file.getPath());
+            return false;
         } else {
             // 确保文件所在文件夹存在
             File parentFile = file.getParentFile();
@@ -198,8 +197,10 @@ public class IoUtils {
             try {
                 final boolean newFile = file.createNewFile();
                 Validate.isTrue(newFile, "文件创建失败 path : " + file.getPath());
+                return true;
             } catch (IOException e) {
                 log.error("文件创建失败 path : " + file.getPath(), e);
+                return false;
             }
         }
     }

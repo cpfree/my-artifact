@@ -17,11 +17,6 @@ public class MainTest {
             }
         }, null);
 
-//        File file = new File("C:\\Users\\Private\\read-now\\red\\妹攻略.txt");
-//        FileReader reader = new FileReader(file);
-//        final CharBuffer target = new CharBuffer();
-//        reader.read(target)
-
     }
 
 
