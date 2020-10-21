@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * <b>Description : </b> 解析二进制图片工具类
  *
@@ -28,50 +29,25 @@ import java.util.List;
 public class PixelPicRecognizer {
 
     /**
-     * 将路径指向的 binPic 转换为文件并存储到指定文件夹
-     *
-     * @param picPath binPic 图片路径
-     * @param saveDirPath 解析后的文件存储路径
-     */
-    public static boolean convertBinPicToFile(String picPath, String saveDirPath) throws IOException {
-        final BufferedImage image = BinPicUtils.load(picPath);
-        final PixelPngReader resolver = PixelPicRecognizer.resolver(image);
-        boolean check = resolver.check();
-        if (!check) {
-            log.error("转换文件失败, MD5值不一样");
-            return false;
-        }
-        if (!(saveDirPath.endsWith("\\") && saveDirPath.endsWith("/"))) {
-            saveDirPath += File.separator;
-        }
-        // 确保存储的文件夹存在
-        IoUtils.insureFileDirExist(new File(saveDirPath));
-        // 写入文件
-        try (FileOutputStream outputStream = new FileOutputStream(new File(saveDirPath + resolver.getPixelPicHeader().getFileName()))){
-            outputStream.write(resolver.getFileContent());
-        }
-        return true;
-    }
-
-    /**
-     * 将路径指向的 binPic 转换为文件并存储到 binPic 路径下的 outfile 文件夹
-     *
-     * @param picPath binPic 图片路径
-     */
-    public static boolean convertBinPicToFileFromSourcePath(String picPath) throws IOException {
-        return convertBinPicToFile(picPath, new File(picPath).getParentFile().getPath() + File.separator + "outfile" + File.separator);
-    }
-
-    /**
      * @param image 待识别的图片
      * @return 识别后的识别器对象
      */
-    public static PixelPngReader resolver(BufferedImage image) {
+    public static PixelPicRecInfo resolver(BufferedImage image) {
         PixelPicRecognizer recognizer = new PixelPicRecognizer();
         recognizer.setImage(image);
         recognizer.distinguish();
         recognizer.pixelReader.readFileInfo();
-        return recognizer.getPixelReader();
+        // 封装结果返回
+        final PixelPngReader pixelReader = recognizer.getPixelReader();
+        final PixelPicRecInfo picRecInfo = new PixelPicRecInfo();
+        picRecInfo.setPixelPicHeader(pixelReader.getPixelPicHeader());
+        picRecInfo.setByteModal(pixelReader.getByteModal());
+        picRecInfo.setXArr(pixelReader.getXArr());
+        picRecInfo.setYArr(pixelReader.getYArr());
+        picRecInfo.setFileContent(pixelReader.getFileContent());
+        picRecInfo.setBitCnt(pixelReader.getBitCnt());
+        picRecInfo.setContentLength(pixelReader.getContentLength());
+        return picRecInfo;
     }
 
     /**

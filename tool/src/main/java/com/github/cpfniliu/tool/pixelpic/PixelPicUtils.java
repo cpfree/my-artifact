@@ -14,9 +14,9 @@ import java.security.NoSuchAlgorithmException;
  * @author CPF
  * Date: 2020/5/21 9:35
  */
-public class BinPicUtils {
+public class PixelPicUtils {
 
-    private BinPicUtils() {
+    private PixelPicUtils() {
     }
 
     /**
@@ -100,7 +100,7 @@ public class BinPicUtils {
      * <p>
      * eg: 当powOf2 为4, 将 [bbbbbbbb] 转换为 [0000bbbb, 0000bbbb], b代表有含义的数
      *
-     * @param powOf2 {@link BinPicUtils#deCodeToByte(int, byte[])}
+     * @param powOf2 {@link PixelPicUtils#deCodeToByte(int, byte[])}
      */
     @SuppressWarnings("java:S127")
     public static int[] convertByte(int powOf2, byte[] b, int len) {
@@ -145,7 +145,7 @@ public class BinPicUtils {
      * <p>
      * eg: 当powOf2 为4, 将 [bbbbbbbb] 转换为 [0000bbbb, 0000bbbb], b代表有含义的数
      *
-     * @param bit {@link BinPicUtils#deCodeToByte(int, byte[])}
+     * @param bit {@link PixelPicUtils#deCodeToByte(int, byte[])}
      */
     @SuppressWarnings("java:S127")
     public static int[] concatByte(int bit, byte[] b, int len) {

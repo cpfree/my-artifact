@@ -1,6 +1,6 @@
 package cn.cpf.test;
 
-import com.github.cpfniliu.tool.pixelpic.BinPicUtils;
+import com.github.cpfniliu.tool.pixelpic.PixelPicUtils;
 import org.junit.Test;
 
 import java.awt.*;
@@ -10,7 +10,7 @@ public class ColorTest {
 
     @Test
     public void main() {
-        final Color[] pxType = BinPicUtils.getPxType((byte) 8);
+        final Color[] pxType = PixelPicUtils.getPxType((byte) 8);
         if (pxType.length == 256) {
             final int[] ints = Arrays.stream(pxType).mapToInt(Color::getRGB).toArray();
             int[][] rArr = new int[4][3];

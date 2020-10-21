@@ -140,16 +140,16 @@ public class PixelPngDrawer {
     protected void drawContent(PixelPicGeneInfo pixelPicGeneInfo) throws IOException {
         final int bitCnt = pixelPicGeneInfo.getBitCnt();
         // 8bit
-        doDrawer(BinPicUtils.convertByte(2, new byte[]{(byte)bitCnt}, 1));
+        doDrawer(PixelPicUtils.convertByte(2, new byte[]{(byte)bitCnt}, 1));
         // color draw
         for (Color color : mappingColor) {
             doDrawPixel(color);
         }
         // 行像素数量
-        drawer(BinPicUtils.toBytes(pixelPicGeneInfo.getParam().getRowPixelCnt()));
+        drawer(PixelPicUtils.toBytes(pixelPicGeneInfo.getParam().getRowPixelCnt()));
         // 文件头长度
         final byte[] bytes = pixelPicGeneInfo.getHeader().toJson().getBytes();
-        drawer(BinPicUtils.toBytes(bytes.length));
+        drawer(PixelPicUtils.toBytes(bytes.length));
         // 文件头
         drawer(bytes);
         // 文件内容
@@ -164,7 +164,7 @@ public class PixelPngDrawer {
     private void drawer(byte[] b, int len) {
         Objects.requireNonNull(mappingColor, "mappingColor must not be null");
         // 将byte数组转为 mappingColor 进制数组
-        int[] clr = BinPicUtils.convertByte(mappingColor.length, b, len);
+        int[] clr = PixelPicUtils.convertByte(mappingColor.length, b, len);
         doDrawer(clr);
     }
 

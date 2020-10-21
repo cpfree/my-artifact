@@ -9,11 +9,7 @@ import javax.imageio.ImageIO;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class BinPicRecognizerTest {
-
-    public static void main(String[] args) throws IOException {
-        PixelPicRecognizer.convertBinPicToFileFromSourcePath("D:\\Users\\CPF\\Desktop\\00930170316.png");
-    }
+public class PixelPicRecognizerTest {
 
     @Test
     public void testGne() throws IOException {
@@ -23,7 +19,7 @@ public class BinPicRecognizerTest {
         pixelPicGeneConfig.setRowPixelCnt(1500);
         pixelPicGeneConfig.setPixelSideWidth(1);
         pixelPicGeneConfig.setPixelSideHeight(2);
-        pixelPicGeneConfig.setMappingColor(BinPicUtils.getPxType(8));
+        pixelPicGeneConfig.setMappingColor(PixelPicUtils.getPxType(8));
         final PixelPngSource pixelPngSource = new PixelPngSource(new File(path));
         final PixelPicGeneInfo pixelPicGeneInfo = new PixelPicGeneInfo(pixelPicGeneConfig, pixelPngSource);
         System.out.println(pixelPicGeneInfo);
@@ -34,7 +30,7 @@ public class BinPicRecognizerTest {
     @Test
     public void testRec() throws IOException {
         final String path = "D:\\Users\\CPF\\Desktop\\微信截图_20201020161743.png";
-        PixelPicRecognizer.convertBinPicToFile(path, path + ".dir");
+        PixelPicHandle.convertPixelPicToFile(path, path + ".dir");
     }
 
 }

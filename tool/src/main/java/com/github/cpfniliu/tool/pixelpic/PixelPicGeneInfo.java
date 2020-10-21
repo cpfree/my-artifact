@@ -71,7 +71,7 @@ public class PixelPicGeneInfo {
         header = new PixelPicHeader();
         header.setFileName(name);
         header.setFileContentLength(dataByte.length);
-        header.setMd5(BinPicUtils.encrypt2ToMd5(dataByte));
+        header.setMd5(PixelPicUtils.encrypt2ToMd5(dataByte));
         final String json = header.toJson();
         log.info("head\t" + json);
         final byte[] headBytes = json.getBytes();

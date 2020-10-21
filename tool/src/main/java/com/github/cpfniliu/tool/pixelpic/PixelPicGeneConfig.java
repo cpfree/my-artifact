@@ -73,14 +73,14 @@ public class PixelPicGeneConfig {
 
     public void checkWithThrow() {
         Objects.requireNonNull(marginLen, "marginLen cannot be null");
-        BinPicUtils.isTrue(rowPixelCnt > 0, "margin require > 0: %s", rowPixelCnt);
-        BinPicUtils.isTrue(pixelSideWidth > 0, "the pixelSideWidth:%s require > 0", pixelSideWidth);
-        BinPicUtils.isTrue(pixelSideHeight > 0, "the pixelSideHeight:%s require > 0", pixelSideHeight);
+        PixelPicUtils.isTrue(rowPixelCnt > 0, "margin require > 0: %s", rowPixelCnt);
+        PixelPicUtils.isTrue(pixelSideWidth > 0, "the pixelSideWidth:%s require > 0", pixelSideWidth);
+        PixelPicUtils.isTrue(pixelSideHeight > 0, "the pixelSideHeight:%s require > 0", pixelSideHeight);
         Objects.requireNonNull(mappingColor, "mappingColor cannot be null");
 
         int bitCnt = (int) (Math.log(mappingColor.length) / Math.log(2));
-        BinPicUtils.isTrue(((int) Math.pow(2, bitCnt)) == mappingColor.length, "marginLen should be a power of 2");
-        BinPicUtils.isTrue(Arrays.stream(mappingColor).noneMatch(Objects::isNull), "mappingColor中不能为空");
+        PixelPicUtils.isTrue(((int) Math.pow(2, bitCnt)) == mappingColor.length, "marginLen should be a power of 2");
+        PixelPicUtils.isTrue(Arrays.stream(mappingColor).noneMatch(Objects::isNull), "mappingColor中不能为空");
     }
 
 }

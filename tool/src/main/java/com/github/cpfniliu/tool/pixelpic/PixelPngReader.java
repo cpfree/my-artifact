@@ -18,11 +18,13 @@ class PixelPngReader {
     /**
      * x 像素区域列表
      */
+    @Getter
     private int[] xArr;
 
     /**
      * y 像素区域列表
      */
+    @Getter
     private int[] yArr;
 
     /**
@@ -33,11 +35,10 @@ class PixelPngReader {
     @Getter
     private byte[] fileContent;
 
+    @Getter
     private int[] byteModal;
 
     @Getter
-    private int pixelTypeCnt;
-
     private int bitCnt;
 
     @Getter
@@ -62,7 +63,7 @@ class PixelPngReader {
         int[] oneTwo = readPixel(2);
         no -= 2;
         bitCnt = deCode(oneTwo, powOf2Bin, 1);
-        pixelTypeCnt = (int) Math.pow(2, bitCnt);
+        int pixelTypeCnt = (int) Math.pow(2, bitCnt);
         byteModal = readPixel(pixelTypeCnt);
     }
 
@@ -101,18 +102,7 @@ class PixelPngReader {
             }
             bytes[i] = (byte) v;
         }
-        return BinPicUtils.deCodeToByte(bitCnt, bytes);
-    }
-
-    /**
-     * 检查文件MD5值
-     */
-    public boolean check() {
-        String md5Hex = BinPicUtils.encrypt2ToMd5(fileContent);
-        String md5 = pixelPicHeader.getMd5();
-        log.info("像素head信息MD5值: {}", md5);
-        log.info("文件解析内容MD5值: {}", md5);
-        return md5.equalsIgnoreCase(md5Hex);
+        return PixelPicUtils.deCodeToByte(bitCnt, bytes);
     }
 
     /**

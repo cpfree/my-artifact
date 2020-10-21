@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 
 public class MainTest {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public void main() throws FileNotFoundException {
         FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read-now\\red"), file -> {
             try {
                 System.out.println(new FileReader(file).getEncoding());

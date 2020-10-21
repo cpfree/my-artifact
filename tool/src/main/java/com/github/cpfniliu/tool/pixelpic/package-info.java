@@ -1,7 +1,7 @@
 /**
  * 像素图片生成器
  *
- * BinPicUtils : 工具类
+ * PixelPicUtils : 工具类
  *
  * 生成PixelPic:
  *
