@@ -35,7 +35,11 @@ public class PixelPicRecognizer {
     public static PixelPicRecInfo resolver(BufferedImage image) {
         PixelPicRecognizer recognizer = new PixelPicRecognizer();
         recognizer.setImage(image);
-        recognizer.distinguish();
+        final boolean distinguish = recognizer.distinguish();
+        if (distinguish) {
+            // 未识别出区域
+            return null;
+        }
         recognizer.pixelReader.readFileInfo();
         // 封装结果返回
         final PixelPngReader pixelReader = recognizer.getPixelReader();

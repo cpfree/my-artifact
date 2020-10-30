@@ -13,10 +13,12 @@ import java.io.IOException;
 public class ResolvePixelLattice {
 
     public static void main(String[] args) throws IOException {
-        if (args == null || args.length < 1) {
-            throw new RuntimeException("参数不能为空");
-        }
-        final String path = args[0];
+//        if (args == null || args.length < 1) {
+//            throw new RuntimeException("参数不能为空");
+//        }
+
+//        final String path = args[0];
+        final String path = "D:\\Users\\CPF\\Desktop\\2020-10-30_182144.png";
         String savePath;
         if (args.length >= 2) {
             savePath = args[1];

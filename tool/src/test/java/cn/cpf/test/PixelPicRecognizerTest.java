@@ -11,12 +11,13 @@ import java.io.IOException;
 
 public class PixelPicRecognizerTest {
 
+    final String path = "D:\\Users\\CPF\\Desktop\\定报价平台数据源清单对应新核心利率汇率缺失字段情况.xlsx";
+
     @Test
     public void testGne() throws IOException {
-        final String path = "E:\\res\\FMBS_DEV_BANK\\inner\\clipout\\国开行全量二级分类代码_new.xlsx";
         PixelPicGeneConfig pixelPicGeneConfig = new PixelPicGeneConfig();
-        pixelPicGeneConfig.setMargin(12, 1, 100, 34);
-        pixelPicGeneConfig.setRowPixelCnt(1500);
+        pixelPicGeneConfig.setMargin(12, 10, 20, 14);
+        pixelPicGeneConfig.setRowPixelCnt(850);
         pixelPicGeneConfig.setPixelSideWidth(1);
         pixelPicGeneConfig.setPixelSideHeight(2);
         pixelPicGeneConfig.setMappingColor(PixelPicUtils.getPxType(8));
@@ -29,8 +30,9 @@ public class PixelPicRecognizerTest {
 
     @Test
     public void testRec() throws IOException {
-        final String path = "D:\\Users\\CPF\\Desktop\\微信截图_20201020161743.png";
-        PixelPicHandle.convertPixelPicToFile(path, path + ".dir");
+        final String filepath = path + ".png";
+        final boolean b = PixelPicHandle.convertPixelPicToFile(filepath, filepath + ".dir");
+        System.out.println(b);
     }
 
 }

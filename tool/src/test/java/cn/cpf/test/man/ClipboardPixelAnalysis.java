@@ -40,6 +40,10 @@ public class ClipboardPixelAnalysis {
     public static boolean convertBinPicToFile(BufferedImage image, String saveDirPath) throws IOException {
         // 确保存储的文件夹存在
         final PixelPicRecInfo picRecInfo = PixelPicRecognizer.resolver(image);
+        if (picRecInfo == null) {
+            System.out.println("未识别出像素图片区域");
+            return false;
+        }
         System.out.println("picRecInfo ==> \n" + picRecInfo);
         boolean check = picRecInfo.check();
         if (!check) {

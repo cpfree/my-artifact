@@ -50,7 +50,7 @@ public class ExcelResolver {
     /**
      * 判断Excel的版本,获取Workbook
      */
-    private static Workbook getMatchWorkbook(@NonNull ExcelType excelType, InputStream in) throws IOException {
+    public static Workbook getMatchWorkbook(@NonNull ExcelType excelType, InputStream in) throws IOException {
         if (excelType == ExcelType.XLS) {
             return new HSSFWorkbook(in);
         } else if (excelType == ExcelType.XLSX) {
@@ -252,7 +252,7 @@ public class ExcelResolver {
      * @return 解析后的对象
      * @throws ParseException
      */
-    private static Object resolveCell(Cell cell, Class<?> tClass) throws ParseException {
+    public static Object resolveCell(Cell cell, Class<?> tClass) throws ParseException {
         //跳过空单元格
         if (cell == null) {
             return null;
@@ -296,7 +296,7 @@ public class ExcelResolver {
                 }
                 break;
             case FORMULA:
-                return cell.getArrayFormulaRange();
+                return cell.getRichStringCellValue().getString();
             case ERROR:
                 return cell.getErrorCellValue();
             case BLANK:

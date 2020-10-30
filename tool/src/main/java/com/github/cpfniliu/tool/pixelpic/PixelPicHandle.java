@@ -98,9 +98,13 @@ public class PixelPicHandle {
     public static boolean convertPixelPicToFile(String picPath, String saveDirPath) throws IOException {
         final BufferedImage image = PixelPicUtils.load(picPath);
         final PixelPicRecInfo picRecInfo = PixelPicRecognizer.resolver(image);
+        if (picRecInfo == null) {
+            log.warn("未识别出像素图片区域");
+            return false;
+        }
         boolean check = picRecInfo.check();
         if (!check) {
-            log.error("转换文件失败, MD5值不一样");
+            log.warn("转换文件失败, MD5值不一样");
             return false;
         }
         if (!(saveDirPath.endsWith("\\") && saveDirPath.endsWith("/"))) {

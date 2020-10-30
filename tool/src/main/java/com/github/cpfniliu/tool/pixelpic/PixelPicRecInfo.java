@@ -38,4 +38,14 @@ public class PixelPicRecInfo {
         log.info("文件解析内容MD5值: {}", md5);
         return md5.equalsIgnoreCase(md5Hex);
     }
+
+    @Override
+    public String toString() {
+        return "PixelPicRecInfo{" +
+                "pixelPicHeader=" + pixelPicHeader +
+                ", pixelTypeCnt=" + pixelTypeCnt +
+                ", bitCnt=" + bitCnt +
+                ", contentLength=" + contentLength +
+                '}';
+    }
 }
