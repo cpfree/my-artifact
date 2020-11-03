@@ -21,12 +21,12 @@ public class PixelPicGeneConfig {
      * 代表像素图片 8 * 4
      */
     @Getter
-    private final int type = 0;
+    private int type = 0;
     /**
      * 版本号: 8 * 4
      */
     @Getter
-    private final int version = 1;
+    private int version = 1;
     /**
      * 版本号: 8 * 4
      */

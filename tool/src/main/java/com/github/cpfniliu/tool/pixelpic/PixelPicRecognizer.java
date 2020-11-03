@@ -2,7 +2,6 @@ package com.github.cpfniliu.tool.pixelpic;
 
 import com.github.cpfniliu.common.ext.bean.DoubleBean;
 import com.github.cpfniliu.common.lang.WrongBranchException;
-import com.github.cpfniliu.common.util.io.IoUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -11,13 +10,9 @@ import org.apache.commons.lang3.Validate;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 /**
  * <b>Description : </b> 解析二进制图片工具类
@@ -36,7 +31,7 @@ public class PixelPicRecognizer {
         PixelPicRecognizer recognizer = new PixelPicRecognizer();
         recognizer.setImage(image);
         final boolean distinguish = recognizer.distinguish();
-        if (distinguish) {
+        if (!distinguish) {
             // 未识别出区域
             return null;
         }
@@ -101,20 +96,27 @@ public class PixelPicRecognizer {
         return false;
     }
 
+    /**
+     * 通过斜边切入点找到该绘制区域(可能是绘制区域)的左上方的点
+     * (r, r) 是当前切入的点
+     *
+     * @param r 斜边切入的边长
+     * @return 该绘制区域(可能是绘制区域)的左上方的点
+     */
     private Point findLeftTopPointFromSidePixel(int r) {
-        int rgb_1 = image.getRGB(r - 1, r - 1);
-        // TODO rgb_1 应该是灰色, 与灰色相近的点, 不应该和黑色和白色相近
+        // 通过斜边切入到当前点的上一个点, 在此应该是刚从边缘切向黑白边, 因此应该是灰色, 与灰色相近的点, 不应该和黑色和白色相近
+        int rgbMinusOne = image.getRGB(r - 1, r - 1);
         // 判断(r,r)是否是横轴点还是纵轴点
-        if (isNearColor(rgb_1, image.getRGB(r, r - 1)) && isBorderVal(image.getRGB(r - 1, r))) {
+        if (isNearColor(rgbMinusOne, image.getRGB(r, r - 1)) && isBorderVal(image.getRGB(r - 1, r))) {
             // 如果左边是 黑白框 点,
             int x = r - 2;
             while (isBorderVal(image.getRGB(x, r))) x--;
             return new Point(++ x, r);
-        } else if (isNearColor(rgb_1, image.getRGB(r - 1, r)) && isBorderVal(image.getRGB(r, r-1))) {
+        } else if (isNearColor(rgbMinusOne, image.getRGB(r - 1, r)) && isBorderVal(image.getRGB(r, r-1))) {
             int y = r - 2;
             while (isBorderVal(image.getRGB(r, y))) y--;
             return new Point(r, ++ y);
-        } else if (isNearColor(rgb_1, image.getRGB(r - 1, r)) && isNearColor(rgb_1, image.getRGB(r, r - 1))) {
+        } else if (isNearColor(rgbMinusOne, image.getRGB(r - 1, r)) && isNearColor(rgbMinusOne, image.getRGB(r, r - 1))) {
             return new Point(r, r);
         }
         return null;
@@ -127,7 +129,6 @@ public class PixelPicRecognizer {
      * 从 leftTopPoint 出发, 向右, 向下, 找到黑白框边界
      * 判断边界是否围了一周,
      * 判断边界外一圈是否全是和rgb_1相近的像素
-     * // TODO 判断黑白像素左边和右边黑白色数量是否一致
      * @return 识别的绘制区域, 如果识别不出则返回null
      */
     @SuppressWarnings("java:S1659")
@@ -161,22 +162,22 @@ public class PixelPicRecognizer {
         final int borderWidth = rightTop.x - leftTopPoint.x + 2;
         final int borderHeight = leftBottom.y - leftTopPoint.y + 2;
         // →
-        final int[] rgb = image.getRGB(leftTopPoint.x - 1, leftTopPoint.y - 1, borderWidth, 1, null, 0, borderWidth);
+        int[] rgb = image.getRGB(leftTopPoint.x - 1, leftTopPoint.y - 1, borderWidth, 1, null, 0, borderWidth);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
         // →↓
-        image.getRGB(rightTop.x + 1, leftTopPoint.y - 1, 1, borderHeight, null, 0, borderHeight);
+        rgb = image.getRGB(rightTop.x + 1, leftTopPoint.y - 1, 1, borderHeight, null, 0, borderHeight);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
         // ↓
-        image.getRGB(leftTopPoint.x - 1, leftTopPoint.y, 1, borderHeight, null, 0, borderHeight);
+        rgb = image.getRGB(leftTopPoint.x - 1, leftTopPoint.y, 1, borderHeight, null, 0, borderHeight);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
         // ↓→
-        image.getRGB(leftBottom.x, leftTopPoint.y + 1, borderWidth, 1, null, 0, borderWidth);
+        rgb = image.getRGB(leftBottom.x, leftTopPoint.y + 1, borderWidth, 1, null, 0, borderWidth);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
@@ -192,6 +193,11 @@ public class PixelPicRecognizer {
 
     /**
      * 寻找 XArr, YArr
+     * XArr: x轴每一个像素点阵中的平均值
+     * yArr: y轴每一个像素点阵中的平均值
+     *
+     * @param info 识别的像素信息
+     * @return DoubleBean<x坐标集合, y坐标集合>
      */
     @SuppressWarnings("java:S3776")
     public DoubleBean<int[], int[]> findXYArr(PixelPicRecCngInfo info) {
@@ -322,7 +328,7 @@ public class PixelPicRecognizer {
     }
 
     /**
-     * 判断定位区像素是否是白色
+     * 判断两个像素是否相近
      *
      * @param rgb1
      * @param rgb2
@@ -330,11 +336,14 @@ public class PixelPicRecognizer {
      */
     public static boolean isNearColor(int rgb1, int rgb2) {
         int rgb = rgb1 ^ rgb2;
-        int n = 0;
-        n += (rgb >>> 16 & 0xFF);
-        n += (rgb >>> 8 & 0xFF);
-        n += (rgb & 0xFF);
-        return n < 60;
+        final int cnt = 0x10;
+        if ((rgb >>> 16 & 0xFF ) > cnt) {
+            return false;
+        }
+        if ((rgb >>> 8 & 0xFF) > cnt) {
+            return false;
+        }
+        return (rgb & 0xFF) <= cnt;
     }
 
 }

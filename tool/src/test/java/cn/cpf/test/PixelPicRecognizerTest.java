@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class PixelPicRecognizerTest {
 
-    final String path = "D:\\Users\\CPF\\Desktop\\定报价平台数据源清单对应新核心利率汇率缺失字段情况.xlsx";
+    final String path = "D:\\Users\\CPF\\Desktop\\2020-10-30_182144";
 
     @Test
     public void testGne() throws IOException {

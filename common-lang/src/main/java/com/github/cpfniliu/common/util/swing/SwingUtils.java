@@ -16,15 +16,17 @@ public class SwingUtils {
     private SwingUtils() {}
 
     /**
-     * 频率, 每隔多少毫秒移动一次
+     * (默认)频率, 每隔多少毫秒移动一次
      */
-    public static final int interval = 5;
+    public static final int INTERVAL = 5;
     /**
-     * 基本移动时间
+     * (默认)基本移动时间
      */
-    public static final int baseTime = 1000;
-
-    public static final int pxOneTime = 1;
+    public static final int BASE_TIME = 1000;
+    /**
+     * (默认)一次移动多长距离
+     */
+    public static final int PX_ONE_TIME = 1;
 
     /**
      * 在一个panel中平滑将一个组件移动至另一个地点(动画效果)
@@ -34,7 +36,7 @@ public class SwingUtils {
      * @param toPoint   最终位置
      */
     public static void moveComp(Component component, Point toPoint) {
-        moveComp(component, toPoint, baseTime, interval, pxOneTime);
+        moveComp(component, toPoint, BASE_TIME, INTERVAL, PX_ONE_TIME);
     }
 
     /**
