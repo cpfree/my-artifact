@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 像素读取
@@ -122,7 +123,7 @@ class PixelPngReader {
         int[] intSerial = readPixel(contentLength * bi);
         byte[] content = deCodeToByte(intSerial);
         // 文件头
-        final String json = new String(content);
+        final String json = new String(content, StandardCharsets.UTF_8);
         log.info("文件头信息: {}", json);
         pixelPicHeader = PixelPicHeader.fromJson(json);
         // 文件内容

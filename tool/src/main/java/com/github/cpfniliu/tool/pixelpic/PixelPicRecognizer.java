@@ -161,23 +161,23 @@ public class PixelPicRecognizer {
         /* 判断周围边缘全部是灰色 */
         final int borderWidth = rightTop.x - leftTopPoint.x + 2;
         final int borderHeight = leftBottom.y - leftTopPoint.y + 2;
-        // →
+        // → : 上边缘
         int[] rgb = image.getRGB(leftTopPoint.x - 1, leftTopPoint.y - 1, borderWidth, 1, null, 0, borderWidth);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
-        // →↓
-        rgb = image.getRGB(rightTop.x + 1, leftTopPoint.y - 1, 1, borderHeight, null, 0, borderHeight);
+        // →↓ : 右边缘
+        rgb = image.getRGB(rightTop.x + 1, rightTop.y - 1, 1, borderHeight, null, 0, 1);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
-        // ↓
-        rgb = image.getRGB(leftTopPoint.x - 1, leftTopPoint.y, 1, borderHeight, null, 0, borderHeight);
+        // ↓ : 左边缘
+        rgb = image.getRGB(leftTopPoint.x - 1, leftTopPoint.y, 1, borderHeight, null, 0, 1);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }
-        // ↓→
-        rgb = image.getRGB(leftBottom.x, leftTopPoint.y + 1, borderWidth, 1, null, 0, borderWidth);
+        // ↓→ : 下边缘
+        rgb = image.getRGB(leftBottom.x, leftBottom.y + 1, borderWidth, 1, null, 0, borderWidth);
         if (!Arrays.stream(rgb).allMatch(PixelPicRecognizer::isGray)) {
             return null;
         }

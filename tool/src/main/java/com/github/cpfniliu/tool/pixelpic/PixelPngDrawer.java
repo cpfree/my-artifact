@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Slf4j
@@ -148,7 +149,7 @@ public class PixelPngDrawer {
         // 行像素数量
         drawer(PixelPicUtils.toBytes(pixelPicGeneInfo.getParam().getRowPixelCnt()));
         // 文件头长度
-        final byte[] bytes = pixelPicGeneInfo.getHeader().toJson().getBytes();
+        final byte[] bytes = pixelPicGeneInfo.getHeader().toJson().getBytes(StandardCharsets.UTF_8);
         drawer(PixelPicUtils.toBytes(bytes.length));
         // 文件头
         drawer(bytes);
