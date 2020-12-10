@@ -115,7 +115,7 @@ public class StandardSqlPool {
     public static <T> SqlEleBean updateEntityOnDemand(@NonNull T t, @NonNull Object[] objects, String whereKey, Object whereKeyVal) throws NoSuchFieldException, IllegalAccessException {
         DoubleBean<List<String>, List<Object>> mark = DbEntityUtil.mark(t, objects);
         String[] objects1 = (String[])mark.getO1().toArray();
-        Object[] param = mark.getTwo().toArray(new Object[objects1.length + 1]);
+        Object[] param = mark.getO2().toArray(new Object[objects1.length + 1]);
         String sql = geneStandardUpdateSql(t, objects1, whereKey);
         param[objects1.length] = whereKeyVal;
         return new SqlEleBean(sql, param);

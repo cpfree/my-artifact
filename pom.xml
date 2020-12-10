@@ -10,10 +10,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common-lang</module>
         <module>common-dal</module>
-        <module>extend-mod</module>
-        <module>tool</module>
+        <module>log-adapter</module>
     </modules>
     
 </project>
